@@ -1,15 +1,22 @@
 import os
+import logging
 import textwrap
 import nbformat
 
 from nbformat.v4 import new_code_cell
 from nbconvert.preprocessors import ExecutePreprocessor
 
+LOG = logging.getLogger('treon.task')
 
-def execute_notebook(path):
+def execute_notebook(path, verbose=False):
     notebook = nbformat.read(path, as_version=4)
     notebook.cells.extend([unittest_cell(), doctest_cell()])
     processor = ExecutePreprocessor(timeout=-1, kernel_name='python3')
+
+    if verbose:
+        def print_executed_cell_index(cell, cell_index):
+            LOG.debug(f"Start executing cell {cell_index}")
+        processor.on_cell_start = print_executed_cell_index
     processor.preprocess(notebook, metadata(path))
     return parse_test_result(notebook.cells)
 

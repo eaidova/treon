@@ -22,7 +22,7 @@ class Task:
         LOG.info("Triggered test for %s", self.file_path)
 
         try:
-            self.is_successful, console_output = execute_notebook(self.file_path)
+            self.is_successful, console_output = execute_notebook(self.file_path, _is_verbose())
             result = self.result_string()
 
             if not self.is_successful or _is_verbose():
